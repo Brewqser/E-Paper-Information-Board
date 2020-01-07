@@ -9,7 +9,7 @@ Design Laboratory Project
 4. Board Testing.
 5. Prepare Grid and run tests (base_grid, Grid.jpg).
 
-6. Created exel spreadsheet ().
+6. Created exel spreadsheet (https://docs.google.com/spreadsheets/d/1gxtl_GKmRAolRyfR_gdwDhk2ZIX_qNM08uLq0AaBJCs/edit?usp=sharing).
 7. Reaserch (4h).
 8. Doing Tests (network_test).
 9. Find WiFi Shield Lib (https://github.com/stm32duino/WiFi-ISM43362-M3G-L44).
