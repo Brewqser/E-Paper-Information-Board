@@ -17,3 +17,6 @@ Design Laboratory Project
 12. WiFi Connection (No Encryption) (network_connect)
 13. Wirte some google scrips code (https://script.google.com/d/1bj7HgN_XCmmqf7RyHpEqmJyIgPmN2LVnuz4rw4gfU4CADRtul6D5ehsa/edit)
 14. Tring to Get that script (dont work for now).
+15. Grid update.
+16. Add NFC counter.
+17. Tring to setup NFC.
