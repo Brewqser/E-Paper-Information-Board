@@ -20,3 +20,5 @@ Design Laboratory Project
 15. Grid update.
 16. Add NFC counter.
 17. Tring to setup NFC.
+18. NFC on board works.
+19. Try seting all up with only nfc.
