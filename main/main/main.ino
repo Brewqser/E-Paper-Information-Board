@@ -28,20 +28,20 @@ GxEPD_Class display(io, /*RST=*/ 8, /*BUSY=*/ 7);
 
 int numberOfHours = 3;
 int numberOfNews = 7;
-int heightOffset = 147;
-int widhtOffset = 40;
-int widht2 = 300;
+int heightOffset = 145;
+int widhtOffset = 5;
+int widht2 = 371;
 int spacing = 85;
 int NFCcounter = 0;
 int code1 = 2137;
 
-String normalTimes[6] = {"12:00", "15:00", "11:00", "19:00", "09:00", "14:53"};
-String presentTimes[6] = {"12:00", "15:00", "11:00", "16:29", "12:23", "14:52"};
-String news[7] = {"Info", "InfoInfo", "InfoInfoInfo", "InfoInfoInfo", "InfoInfoInfoInfo", "InfoInfoInfoInfoInfo", "InfoInfoInfoInfoInfoInfo"};
+String normalTimes[9] = {"MON", "12:00", "15:00","TUE", "11:00", "19:00","FRI", "09:00", "14:53"};
+String presentTimes[9] = {"MON", "12:00", "15:00", "WED", "11:00", "16:29","FRI", "12:23", "14:52"};
+String news[7] = {"", "", "", "", "", "", ""};
 String studentID[100];
 
-String text_write = ""; // Text to write in the tag
-char text[1000] = "";
+String text_write = "Brak"; // Text to write in the tag
+char text[1000] = "Brak";
 char text_readp[1000] = {'\0'};                             // Text read in the tag
 char text_readn[1000] = {'\0'};
 
@@ -51,26 +51,17 @@ void setup()
 {
   Serial.begin(115200);
   Serial.println();
-  //Serial.println("setup");
   
   dev_i2c.begin();
   display.init(115200); // enable diagnostic output on Serial
-
-  Serial.println("setup done");
+  
   text_write.toCharArray(text, 1000);
   
   if(nfcTag.writeTxt(text) == false) {
     SerialPort.println("Write failed!");
     while(1);
   }
-/*
-  if(nfcTag.begin(NULL) == 0) {
-    SerialPort.println("System Init done!");
-  } else {
-    SerialPort.println("System Init failed!");
-    while(1);
-  }
-  */
+  
   updateDisplay();
 }
 
@@ -81,8 +72,6 @@ void loop() {
   if (disrefresh == 1) 
   {
     disrefresh = 0;
-
-    SerialPort.println("update");
     updateDisplay();
   }
   delay(5000);
@@ -100,27 +89,15 @@ void parseNFC()
 
   int it=0;
   int itt=0;
-  //SerialPort.println(a);
-
  
   String op = a.substring(0,1);
   
   if (op == "N")
   {
     String code = a.substring(2,6);
-    //SerialPort.println("op: ");
-    //SerialPort.println(op);
-    //SerialPort.println("code: ");
-    //SerialPort.println(code);
-    //SerialPort.println(code1);
     if (code == String(code1))
     {
       op = a.substring(7,8);
-
-      //if (op == "3") itt = 3; 
-      //if (op == "2") itt = 2; 
-      //if (op == "1") itt = 1; 
-
       if (op == "R")
       {
         NFCcounter = 0;
@@ -133,63 +110,74 @@ void parseNFC()
         if (op == "3") itt = 3; 
         if (op == "2") itt = 2; 
         if (op == "1") itt = 1; 
+        
         numberOfHours = itt;
         it=11;
-        for (int i=0; i < itt * 2;i++)
+        for (int i=0; i < itt;i++)
         {
-           code = a.substring(it + i * 6, it + i * 6 + 5);
-          // SerialPort.println(code);
-           // SerialPort.println(normalTimes[i]);
-           normalTimes[i] = code;
-          SerialPort.println(normalTimes[i]);
+           code = a.substring(it + i * 16, it + i * 16 + 3);
+           normalTimes[i*3] = code;
+
+           code = a.substring(it + i * 16 + 4, it + i * 16 + 9);
+           normalTimes[i*3 + 1] = code;
+
+           code = a.substring(it + i * 16 + 10, it + i * 16 + 15);
+           normalTimes[i*3 + 2] = code;
         }
-  
-        for (int i=itt * 2; i < itt*4; i++)
+        it=11 + itt * 16;
+        for (int i=0; i < itt; i++)
         {
-           code = a.substring(it + i * 6, it + i * 6 + 5);
-           //SerialPort.println(presentTimes[i-itt * 2]); 
-           presentTimes[i-itt * 2] = code;
-           SerialPort.println(presentTimes[i-itt * 2]);
+           code = a.substring(it + i * 16, it + i * 16 + 3);
+           presentTimes[i*3] = code;
+
+           code = a.substring(it + i * 16 + 4, it + i * 16 + 9); 
+           presentTimes[i*3 + 1] = code;
+
+           code = a.substring(it + i * 16 + 10, it + i * 16 + 15);
+           presentTimes[i*3 + 2] = code;
         }
-        
-        SerialPort.println("git");
         disrefresh = 1;
       }
-      
+      else if (op == "I")
+      {
+          op = a.substring(9,10);
+          if (op == "7") itt = 7; 
+          if (op == "6") itt = 6; 
+          if (op == "5") itt = 5; 
+          if (op == "4") itt = 4;
+          if (op == "3") itt = 3; 
+          if (op == "2") itt = 2; 
+          if (op == "1") itt = 1;
+          it=11;
+          code = a.substring(it, max(it + 24, int(a.length())));
+          news[itt-1] = code;
+          disrefresh = 1;
+      }
     }
-    else if (op == "I")
-    {
-        op = a.substring(9,10);
-        if (op == "7") itt = 7; 
-        if (op == "6") itt = 6; 
-        if (op == "5") itt = 5; 
-        if (op == "4") itt = 4;
-        if (op == "3") itt = 3; 
-        if (op == "2") itt = 2; 
-        if (op == "1") itt = 1;
-
-        
-    }
-      
   }
   if (op == "S") 
   {
-     SerialPort.println("student");
      String code = a.substring(2,8);
      studentID[NFCcounter] = code;
      disrefresh = 1;
      NFCcounter++;
   }
 
-  text_write = "";
-  for(int i=0; i< NFCcounter; i++)
-    text_write = text_write + " " + studentID[i];
-   text_write.toCharArray(text, 1000);
-   SerialPort.println(nfcTag.writeTxt(text));
+  if(NFCcounter == 0)
+  {
+    text_write = "Brak";
+    text_write.toCharArray(text, 1000);
+  }
+  else
+  {
+    text_write = "";
+    for(int i=0; i< NFCcounter; i++)
+    {
+      text_write = text_write + " " + studentID[i];
+    }
+    text_write.toCharArray(text, 1000);
+  }
   nfcTag.writeTxt(text);
-  
-
-  
 }
 
 void checkNFC()
@@ -198,14 +186,10 @@ void checkNFC()
   SerialPort.print("Message content: ");
   SerialPort.println(text_readn);
 
-  if(strcmp(text_readp, text_readn) == 0) {
-    SerialPort.println("same");
-    
-  } else {
-    SerialPort.println("difrent");
+  if(strcmp(text_readp, text_readn) != 0)
     parseNFC();
-  }
-  for (int i=0;i<255;i++)
+    
+  for (int i=0;i<1000;i++)
     text_readp[i] = text_readn[i];
 }
 
@@ -223,21 +207,27 @@ void updateDisplay()
       display.fillRect(widhtOffset, heightOffset + i * 85 , widht2 + 3, 3, GxEPD_BLACK);
   }
   display.fillRect(widhtOffset, heightOffset, 3, numberOfHours * 85, GxEPD_BLACK);
-  display.fillRect(widhtOffset + widht2 / 2, heightOffset, 3, numberOfHours * 85, GxEPD_BLACK);
+  display.fillRect(widhtOffset + 100, heightOffset, 3, numberOfHours * 85, GxEPD_BLACK);
+  display.fillRect(widhtOffset + 100 + ((widht2 - 100) / 2), heightOffset, 3, numberOfHours * 85, GxEPD_BLACK);
   display.fillRect(widhtOffset + widht2, heightOffset, 3, numberOfHours * 85, GxEPD_BLACK);
 
   display.setFont(&FreeMonoBold18pt7b);
   for (int i=0;i<numberOfHours;i++)
   {
       display.setCursor(widhtOffset + 15, heightOffset + 15 + (i + 0.5) * spacing);
-      if (normalTimes[2*i] == presentTimes[2*i]) display.setTextColor(GxEPD_BLACK);
+      if (normalTimes[3*i] == presentTimes[3*i]) display.setTextColor(GxEPD_BLACK);
       else display.setTextColor(GxEPD_RED);
-      display.println(presentTimes[2*i]);
+      display.println(presentTimes[3*i]);
 
-      display.setCursor(widhtOffset + widht2 / 2 + 15, heightOffset + 15 + (i + 0.5) * spacing);
-      if (normalTimes[2*i+1] == presentTimes[2*i+1]) display.setTextColor(GxEPD_BLACK);
+      display.setCursor(widhtOffset + 100 + 15, heightOffset + 15 + (i + 0.5) * spacing);
+      if (normalTimes[3*i+1] == presentTimes[3*i+1]) display.setTextColor(GxEPD_BLACK);
       else display.setTextColor(GxEPD_RED);
-      display.println(presentTimes[2*i+1]);
+      display.println(presentTimes[3*i+1]);
+
+      display.setCursor(widhtOffset + 100 + ((widht2 - 100) / 2) + 15, heightOffset + 15 + (i + 0.5) * spacing);
+      if (normalTimes[3*i+2] == presentTimes[3*i+2]) display.setTextColor(GxEPD_BLACK);
+      else display.setTextColor(GxEPD_RED);
+      display.println(presentTimes[3*i+2]);
   }
 
   // news
