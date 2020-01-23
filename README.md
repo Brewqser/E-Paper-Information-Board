@@ -24,3 +24,32 @@ Design Laboratory Project
 19. Try seting all up with only nfc.
 20. NFC on board works 
 21. Getting info through NFC.
+22. Update grid(final vercion.jpg).
+23. Test all NFC commands.
+
+# NFC commands
+
+There are 4 commands that allow users to update display.
+
+### S 123456 (Key: S (student) Number: 123456 (students ID))
+
+This command increase NFC counter and refresh dispaly.
+
+### N 2137 R (Key: N (teacher) Number: 2137 (teachers security code) Key: R (reset))
+
+This command resets NFC counter and refresh dispaly.
+
+### N 2137 H 1 MON 12:00 15:00 FRI 12:23 14:23 
+
+(Key: N (teacher) Number: 2137 (teachers security code) Key: H (hours) Number: 1 (how many lines ther are max 3) Data: MON 12:00 15:00 FRI 12:23 14:23 (first normal hours for specified teacher then his/hers changed hours) )
+
+This command sets hours for all teachers and refresh dispaly.
+
+### N 2137 I 1 Testing
+
+(Key: N (teacher) Number: 2137 (teachers security code) Key: I (news) Number: 1 (which lines ifno should be displayed max 7) 
+Text: Testing (text that will de displayed))
+
+This command sets specified text in specified line and refresh dispaly.
+
+When u read NFC tag at any moment it will show all students ID that saves it.
