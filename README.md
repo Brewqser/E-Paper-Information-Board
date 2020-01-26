@@ -27,6 +27,10 @@ Design Laboratory Project
 22. Update grid(final vercion.jpg).
 23. Test all NFC commands.
 
+# Video
+
+[See video](https://youtu.be/UOiABJdIu4o)
+
 # NFC commands
 
 There are 4 commands that allow users to update display.
